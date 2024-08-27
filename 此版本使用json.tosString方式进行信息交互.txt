@@ -1,0 +1,8 @@
+此版本QA：
+Q1：为什么服务端收不到客户端的信息
+A1：可能是服务端未flush掉缓冲区内容导致挤压，也可能是客户端传入的json包没有'\n'（先json.toString()再加'\n'）
+Q2：为什么会出现以下报错
+“客户端已连接
+接收到的数据: {"operation":"login_submit","username":213287382,"password":"123456"}
+Exception in thread "Thread-0" net.sf.json.JSONException: JSONObject["cardNumber"] is not a number.”
+A2：不应该使用username来存cardnumber，怀疑是由于缺失cardNumber数据导致的报错，username更正为cardNumber后正常
