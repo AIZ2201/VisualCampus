@@ -6,11 +6,20 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.Scanner;
 
 import net.sf.json.JSONObject;
 
+import javax.crypto.Cipher;
+
 public class client {
+    private static final String PUBLIC_KEY_STRING = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5t7j8a8qpvDcDq4ecSGleaww5MfBG/PeizhryjFPi6hXkyKKfLNCkVp2tH2HQCv6wdCILBVQvkEmtuGISnYiHZfh09EqJ+2bnFhY8TqExbvOCiiTimRXpCGMdbRDce07jD1q/tt7RSFsbVwOgDdJi9/750Nh8yrY0YJwttoFYz6eaAqHKxc/L/W8h1MvdrCaMjmwrz/rvXn7emn5YjdrdTibAmhRDhL4+t6/qk8sAmOoaSpOE0pSiLc/qMj35FIEzopdemJh1PVGC2vmdbw7yXtJeTXjo59OPAfmDKGfZMQty8WL7MEF5pbA0zfrueqSWP+bgdziKk+053G394vR5wIDAQAB"; // 替换为生成的公钥
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         InputStreamReader isr;
@@ -29,8 +38,15 @@ public class client {
             System.out.println("cardNumber:");
             user.setCardNumber(in.nextInt());
             in.nextLine();
+
             System.out.println("password:");
             user.setPassword(in.nextLine());
+
+            // 加密密码
+            String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+            user.setPassword(encryptedPassword);
+
+
             JSONObject jsonObject = JSONObject.fromObject(user);
             System.out.println(jsonObject);
             rw.write(jsonObject.toString()+"\n");
@@ -60,5 +76,18 @@ public class client {
         } catch (Exception e) {
             // TODO: handle exception
         }
+    }
+
+    private static String encryptPassword(String password, String publicKeyString) throws Exception {
+        byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyString);
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PublicKey publicKey = keyFactory.generatePublic(spec);
+
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
+        byte[] encryptedBytes = cipher.doFinal(password.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 }

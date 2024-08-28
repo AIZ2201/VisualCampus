@@ -3,12 +3,12 @@ import net.sf.json.JSONObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class login_page {
+public class studentStatus_page {
     private int cardnumber;
     private String password;
 
-    //登录页面登录操作的处理函数
-    public JSONObject login_submit(JSONObject user) {
+    //学籍管理页面查看学籍操作的处理函数
+    public JSONObject studentStatus_view(JSONObject user) {
         JSONObject object = new JSONObject();
         object.put("status", "failed");
 
@@ -19,7 +19,7 @@ public class login_page {
             password = user.getString("password");
 
             // 准备查询语句
-            String query = "SELECT * FROM user WHERE cardNumber = ?";//此处user对应着使用的表
+            String query = "SELECT * FROM student WHERE cardNumber = ?";
             ResultSet resultSet = dataAccessObject.executeQuery(query, cardnumber);
 
             // 遍历结果集，验证用户密码
@@ -30,11 +30,14 @@ public class login_page {
                     object.put("cardNumber", cardnumber);
                     object.put("password", password);
                     object.put("name", resultSet.getString("name"));
+                    object.put("studentNumber",resultSet.getString(("studentNumber")));
                     object.put("gender", resultSet.getString("gender"));
-                    object.put("phone", resultSet.getString("phone"));
-                    object.put("email", resultSet.getString("email"));
-                    object.put("role", resultSet.getString("role"));
-                    break; // 找到匹配项后跳出循环
+                    object.put("major", resultSet.getString("major"));
+                    object.put("school", resultSet.getString("school"));
+                    object.put("studentStat", resultSet.getString("studentStat"));
+                    object.put("enrollment", resultSet.getDate("enrollment"));
+                    object.put("birthPlace", resultSet.getString("birthPlace"));
+                    object.put("politicalStat", resultSet.getString("politicalStat"));
                 }
             }
 
@@ -49,6 +52,4 @@ public class login_page {
 
         return object; // 返回结果对象
     }
-
-    //登录页面找回密码操作的处理函数（暂无）
 }
