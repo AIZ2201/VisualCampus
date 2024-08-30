@@ -1,0 +1,28 @@
+此版本QA：
+Q1：为什么服务端收不到客户端的信息
+A1：可能是服务端未flush掉缓冲区内容导致挤压，也可能是客户端传入的json包没有'\n'（先json.toString()再加'\n'）
+Q2：为什么会出现以下报错
+“客户端已连接
+接收到的数据: {"operation":"login_submit","username":213287382,"password":"123456"}
+Exception in thread "Thread-0" net.sf.json.JSONException: JSONObject["cardNumber"] is not a number.”
+A2：不应该使用username来存cardnumber，怀疑是由于缺失cardNumber数据导致的报错，username更正为cardNumber后正常
+
+A3：实体类中建议非int double类型都定义成String类（如数据库中为Date类型，其对应实体类里对应变量用String类型），这样（虽然有偷懒之嫌但是）可以方便json传输（不易报错），每次收到后再进行处理（String转Date后再对数据库处理）
+
+A4：注意json传输用的实体类里的变量都要写唯一对应的set和get函数，如name就要有setName（）和getName（），且不建议写类似getNameInt（）这种get变体函数，容易在json包进行自动映射时出现问题
+
+Q5：服务端出现以下报错是为什么
+java.sql.SQLException: Data truncated for column 'politicalStat' at row 1
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:130)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:916)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1061)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1009)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1320)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:994)
+	at com.output.DataAccessObject.executeUpdate(DataAccessObject.java:52)
+	at com.output.studentStatus_page.studentStatus_change(studentStatus_page.java:125)
+	at ClientHandler.run(Main.java:87)
+A5：因为politicalStat参数为按预想的格式传入，可以打断点查看包体内信息
+
+A6：大概率将一直使用json.toString()方式进行信息交互

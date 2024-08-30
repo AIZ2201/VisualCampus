@@ -41,7 +41,22 @@ public class DataAccessObject {
         return preparedStatement.executeUpdate();
     }
 
+    // 执行删除操作
+    public int executeDelete(String sql, Object... params) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for (int i = 0; i < params.length; i++) {
+            preparedStatement.setObject(i + 1, params[i]);
+        }
+        return preparedStatement.executeUpdate();
+    }
 
-
+    // 执行更新操作
+    public int executeUpdate(String sql, Object... params) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for (int i = 0; i < params.length; i++) {
+            preparedStatement.setObject(i + 1, params[i]);
+        }
+        return preparedStatement.executeUpdate();
+    }
 }
 

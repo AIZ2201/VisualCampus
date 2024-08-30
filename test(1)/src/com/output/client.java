@@ -11,6 +11,10 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.Objects;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 import net.sf.json.JSONObject;
@@ -33,25 +37,105 @@ public class client {
             isr = new InputStreamReader(socket.getInputStream());
             br = new BufferedReader(isr);
             User user = new User();
-            System.out.println("operation:");
-            user.setOperation(in.nextLine());
-            System.out.println("cardNumber:");
-            user.setCardNumber(in.nextInt());
-            in.nextLine();
+            Student student = new Student();
 
-            System.out.println("password:");
-            user.setPassword(in.nextLine());
+            //System.out.println("operation:");
+            //user.setOperation(in.nextLine());
+            user.setOperation("studentStatus_change");
+            if(Objects.equals(user.getOperation(), "login_submit"))
+            {
+                System.out.println("cardNumber:");
+                user.setCardNumber(in.nextInt());
+                in.nextLine();
+                System.out.println("password:");
+                user.setPassword(in.nextLine());
 
-            // 加密密码
-            String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
-            user.setPassword(encryptedPassword);
+                // 加密密码
+                String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+                user.setPassword(encryptedPassword);
 
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                System.out.println(jsonObject);
+                rw.write(jsonObject.toString()+"\n");
+                rw.flush();
+            }
+            if(Objects.equals(user.getOperation(), "studentStatus_view"))
+            {
+                //student.setOperation(user.getOperation());
+                System.out.println("cardNumber:");
+                user.setCardNumber(in.nextInt());
+                in.nextLine();
+                System.out.println("password:");
+                user.setPassword(in.nextLine());
 
-            JSONObject jsonObject = JSONObject.fromObject(user);
-            System.out.println(jsonObject);
-            rw.write(jsonObject.toString()+"\n");
-            rw.flush();
+                // 加密密码
+                String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+                user.setPassword(encryptedPassword);
 
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                System.out.println(jsonObject);
+                rw.write(jsonObject.toString()+"\n");
+                rw.flush();
+            }
+            if(Objects.equals(user.getOperation(), "studentStatus_change"))
+            {
+                System.out.println("cardNumber:");
+                user.setCardNumber(111/*in.nextInt()*/);
+                in.nextLine();
+                System.out.println("password:");
+                user.setPassword("111"/*in.nextLine()*/);
+                System.out.println("studentCardNumber:");
+                student.setCardNumber(111/*in.nextInt()*/);
+                in.nextLine();
+                System.out.println("name:");
+                student.setName("111"/*in.nextLine()*/);
+                System.out.println("studentNumber:");
+                student.setStudentNumber("111"/*in.nextLine()*/);
+                System.out.println("gender:");
+                student.setGender("FEMALE"/*in.nextLine()*/);
+                System.out.println("major:");
+                student.setMajor("111"/*in.nextLine()*/);
+                System.out.println("school:");
+                student.setSchool("111"/*in.nextLine()*/);
+                System.out.println("studentStat:");
+                student.setStudentStat("OFF"/*in.nextLine()*/);
+                System.out.println("enrollment:");
+                student.setEnrollment("2024-08-10"/*in.nextLine()*/);
+                System.out.println("birthPlace:");
+                student.setBirthPlace("111"/*in.nextLine()*/);
+                System.out.println("politicalStat:");
+                student.setPoliticalStat("PartyMember"/*in.nextLine()*/);
+                user.setStudent(student);
+
+                // 加密密码
+                String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+                user.setPassword(encryptedPassword);
+
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                System.out.println(jsonObject);
+                rw.write(jsonObject.toString()+"\n");
+                rw.flush();
+            }
+            if(Objects.equals(user.getOperation(), "studentStatus_search"))
+            {
+                //student.setOperation(user.getOperation());
+                System.out.println("cardNumber:");
+                user.setCardNumber(in.nextInt());
+                in.nextLine();
+                System.out.println("password:");
+                user.setPassword(in.nextLine());
+                System.out.println("searchText:");
+                user.setSearchText(in.nextLine());
+
+                // 加密密码
+                String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+                user.setPassword(encryptedPassword);
+
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                System.out.println(jsonObject);
+                rw.write(jsonObject.toString()+"\n");
+                rw.flush();
+            }
 
             String response = br.readLine();
             if (response != null) {

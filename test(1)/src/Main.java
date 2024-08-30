@@ -1,4 +1,3 @@
-import com.output.User;
 import com.output.login_page;//引入新页面功能时记得引入对应java类
 import com.output.studentStatus_page;
 import net.sf.json.JSONObject;
@@ -31,6 +30,8 @@ public class Main {
         Map<String, Function<JSONObject, JSONObject>> functionMap = new HashMap<>();
         functionMap.put("login_submit", login::login_submit);//登录页面的登录操作（上面先new页面，这里“::”后对应login_page中的处理函数
         functionMap.put("studentStatus_view",studentStatus::studentStatus_view);
+        functionMap.put("studentStatus_change",studentStatus::studentStatus_change);
+        functionMap.put("studentStatus_search",studentStatus::studentStatus_search);
 
         try (ServerSocket serverSocket = new ServerSocket(4444)) {
             System.out.println("服务器已启动，等待连接...");
