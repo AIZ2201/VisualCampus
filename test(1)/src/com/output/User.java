@@ -8,6 +8,8 @@ public class User {
     String password;
     String searchText;
     Student student;
+    Product product;
+    ProductTransactionRecord productTransactionRecord;
     public String getOperation() {
         return operation;
     }
@@ -37,5 +39,9 @@ public class User {
     public String getSearchText() { return this.searchText; }
     public void setStudent(Student student) { this.student = student; }
     public Student getStudent() { return student; }
+    public void setProduct(Product product) { this.product = product; }
+    public Product getProduct() { return product; }
+    public void setProductTransactionRecord(ProductTransactionRecord productTransactionRecord) { this.productTransactionRecord = productTransactionRecord; }
+    public ProductTransactionRecord getProductTransactionRecord() { return productTransactionRecord; }
 }
 

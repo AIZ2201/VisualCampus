@@ -41,7 +41,7 @@ public class client {
 
             //System.out.println("operation:");
             //user.setOperation(in.nextLine());
-            user.setOperation("studentStatus_change");
+            user.setOperation("store_getMyTransaction");
             if(Objects.equals(user.getOperation(), "login_submit"))
             {
                 System.out.println("cardNumber:");
@@ -136,6 +136,61 @@ public class client {
                 rw.write(jsonObject.toString()+"\n");
                 rw.flush();
             }
+            if(Objects.equals(user.getOperation(), "store_show"))
+            {
+                System.out.println("cardNumber:");
+                user.setCardNumber(111/*in.nextInt()*/);
+                in.nextLine();
+                System.out.println("password:");
+                user.setPassword("111"/*in.nextLine()*/);
+
+                // 加密密码
+                String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+                user.setPassword(encryptedPassword);
+
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                System.out.println(jsonObject);
+                rw.write(jsonObject.toString()+"\n");
+                rw.flush();
+            }
+            if(Objects.equals(user.getOperation(), "store_getMyTransaction"))
+            {
+                System.out.println("cardNumber:");
+                user.setCardNumber(111/*in.nextInt()*/);
+                in.nextLine();
+                System.out.println("password:");
+                user.setPassword("111"/*in.nextLine()*/);
+
+                // 加密密码
+                String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+                user.setPassword(encryptedPassword);
+
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                System.out.println(jsonObject);
+                rw.write(jsonObject.toString()+"\n");
+                rw.flush();
+            }
+            if(Objects.equals(user.getOperation(), "store_addProduct"))
+            {
+                System.out.println("cardNumber:");
+                user.setCardNumber(111/*in.nextInt()*/);
+                in.nextLine();
+                System.out.println("password:");
+                user.setPassword("111"/*in.nextLine()*/);
+                Product product = new Product();
+                product.setName("test");
+                user.setProduct(product);
+
+                // 加密密码
+                String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+                user.setPassword(encryptedPassword);
+
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                System.out.println(jsonObject);
+                rw.write(jsonObject.toString()+"\n");
+                rw.flush();
+            }
+
 
             String response = br.readLine();
             if (response != null) {

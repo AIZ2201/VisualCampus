@@ -157,7 +157,7 @@ public class studentStatus_page {
         try {
             DataAccessObject dataAccessObject = new DataAccessObject();
 
-            // 获取客户端传来的管理员cardnumber、password和被修改学生的信息
+            // 获取客户端传来的管理员cardnumber、password和被搜索学生的信息
             int adminCardNumber = user.getInt("cardNumber");
             String adminPassword = user.getString("password");
 
