@@ -70,5 +70,51 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../opencv/build/java/opencv-4100.jar!/" />
+          <root url="file://$MODULE_DIR$/../../opencv/build/java" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://$MODULE_DIR$/../../opencv/build/x64/vc16/bin" />
+          <root url="file://$MODULE_DIR$/../../opencv/build/x64/vc16/bin" />
+          <root url="file://$MODULE_DIR$/../../opencv/build/x64/vc16/bin" />
+          <root url="file://$MODULE_DIR$/../../opencv/build/x64/vc16/bin" />
+          <root url="file://$MODULE_DIR$/../../opencv/build/x64/vc16/bin" />
+        </NATIVE>
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../../opencv/build/java/opencv-4100.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../opencv/build/java/opencv-4100.jar!/" />
+          <root url="file://$MODULE_DIR$/../../opencv/build/java" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../../opencv/build/java" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../../opencv/build/java" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../../opencv/build/java/opencv-4100.jar!/" />
+          <root url="file://$MODULE_DIR$/../../../../../opencv/build/java" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://$MODULE_DIR$/../../../../../opencv/build/x64/vc16/bin" />
+          <root url="file://$MODULE_DIR$/../../../../../opencv/build/x64/vc16/bin" />
+          <root url="file://$MODULE_DIR$/../../../../../opencv/build/x64/vc16/bin" />
+          <root url="file://$MODULE_DIR$/../../../../../opencv/build/x64/vc16/bin" />
+          <root url="file://$MODULE_DIR$/../../../../../opencv/build/x64/vc16/bin" />
+        </NATIVE>
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../../../../../opencv/build/java/opencv-4100.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../../opencv/build/java/opencv-4100.jar!/" />
+          <root url="file://$MODULE_DIR$/../../../../../opencv/build/java" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../../../../../opencv/build/java" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../../../../../opencv/build/java" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>

@@ -7,6 +7,7 @@ public class User {
     //String name;
     String password;
     String searchText;
+    int balance;
     Student student;
     Product product;
     ProductTransactionRecord productTransactionRecord;
@@ -37,6 +38,8 @@ public class User {
     }
     public void setSearchText(String searchText) { this.searchText = searchText; }
     public String getSearchText() { return this.searchText; }
+    public void setBalance(int balance) { this.balance = balance; }
+    public int getBalance() { return this.balance; }
     public void setStudent(Student student) { this.student = student; }
     public Student getStudent() { return student; }
     public void setProduct(Product product) { this.product = product; }

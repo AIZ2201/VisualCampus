@@ -2,6 +2,7 @@ package com.output;
 
 public class ProductTransactionRecord {
     int productID;
+    String name;
     double productPrice;
     int productAmount;
     int cardNumber;
@@ -14,6 +15,12 @@ public class ProductTransactionRecord {
     }
     public void setProductID(int productID) {
         this.productID = productID;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
     public double getProductPrice() {
         return productPrice;

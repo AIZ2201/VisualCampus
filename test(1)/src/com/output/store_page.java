@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
 public class store_page {
     private int cardnumber;
@@ -47,26 +48,27 @@ public class store_page {
                 ResultSet storeResultSet = dataAccessObject.executeQuery(storeQuery);
 
                 // 创建JSONArray来存储商品信息
-                JSONArray itemsArray = new JSONArray();
+                JSONArray productArray = new JSONArray();
 
                 // 遍历商品结果集并将每个商品添加到JSONArray中
                 while (storeResultSet.next()) {
-                    JSONObject itemObject = new JSONObject();
-                    itemObject.put("productID",storeResultSet.getInt("productID"));
-                    itemObject.put("name", storeResultSet.getString("name"));
-                    itemObject.put("price", storeResultSet.getDouble("price"));
-                    itemObject.put("pictureLink", storeResultSet.getString("pictureLink"));
-                    itemObject.put("stock", storeResultSet.getInt("stock"));
-                    itemObject.put("sales", storeResultSet.getInt("sales"));
-                    itemObject.put("description", storeResultSet.getString("description"));
+                    JSONObject productObject = new JSONObject();
+                    productObject.put("productID",storeResultSet.getInt("productID"));
+                    productObject.put("name", storeResultSet.getString("name"));
+                    productObject.put("price", storeResultSet.getDouble("price"));
+                    productObject.put("pictureLink", storeResultSet.getString("pictureLink"));
+                    productObject.put("stock", storeResultSet.getInt("stock"));
+                    productObject.put("sales", storeResultSet.getInt("sales"));
+                    productObject.put("description", storeResultSet.getString("description"));
+                    productObject.put("select",storeResultSet.getString("select"));
 
-                    itemsArray.add(itemObject);
+                    productArray.add(productObject);
                 }
 
                 storeResultSet.close(); // 关闭商品结果集
 
                 // 将商品信息JSONArray添加到返回的JSONObject中
-                object.put("items", itemsArray);
+                object.put("product", productArray);
             } else {
                 object.put("status", "error");
                 object.put("message", "User authentication failed.");
@@ -123,6 +125,7 @@ public class store_page {
                 while (transactionResultSet.next()) {
                     JSONObject transactionObject = new JSONObject();
                     transactionObject.put("productID", transactionResultSet.getInt("productID"));
+                    transactionObject.put("name", transactionResultSet.getString("name"));
                     transactionObject.put("productPrice", transactionResultSet.getDouble("productPrice"));
                     transactionObject.put("productAmount", transactionResultSet.getInt("productAmount"));
                     transactionObject.put("cardNumber", transactionResultSet.getInt("cardNumber"));
@@ -156,8 +159,8 @@ public class store_page {
         return object; // 返回结果对象
     }
 
-    //商店页面支付订单操作的处理函数
-    public JSONObject store_payTransaction(JSONObject user){
+    //商店页面购买商品（支付订单）操作的处理函数
+    public JSONObject store_buygoods(JSONObject user){
         JSONObject object = new JSONObject();
         object.put("status", "failed");
 
@@ -165,19 +168,19 @@ public class store_page {
             DataAccessObject dataAccessObject = new DataAccessObject();
 
             // 获取客户端传来的cardnumber和password
-            int adminCardNumber = user.getInt("cardNumber");
-            String adminPassword = user.getString("password");
+            int CardNumber = user.getInt("cardNumber");
+            String Password = user.getString("password");
 
             // 准备查询语句验证用户身份
             String query = "SELECT * FROM user WHERE cardNumber = ?";
-            ResultSet resultSet = dataAccessObject.executeQuery(query, adminCardNumber);
+            ResultSet resultSet = dataAccessObject.executeQuery(query, CardNumber);
 
             boolean isAuthenticated = false;
 
             // 遍历结果集，验证用户密码
             while (resultSet.next()) {
                 String dbPassword = resultSet.getString("password");
-                if (adminPassword.equals(dbPassword)) {
+                if (Password.equals(dbPassword)) {
                     isAuthenticated = true;
                     break; // 找到匹配项后跳出循环
                 }
@@ -187,17 +190,18 @@ public class store_page {
 
             if (isAuthenticated) {
                 // 获取传回的订单列表
-                JSONArray transactions = user.getJSONArray("transactions");
+                JSONArray goodsList = user.getJSONArray("goodsList");
 
                 // 遍历每个订单，插入到数据库
-                for (int i = 0; i < transactions.size(); i++) {
-                    JSONObject transaction = transactions.getJSONObject(i);
-                    int productID = transaction.getInt("productID");
-                    double productPrice = transaction.getDouble("productPrice");
-                    int productAmount = transaction.getInt("productAmount");
-                    int cardNumber = transaction.getInt("cardNumber");
-                    String timeStr = transaction.getString("time");
-                    String remark = transaction.getString("remark");
+                for (int i = 0; i < goodsList.size(); i++) {
+                    JSONObject goods = goodsList.getJSONObject(i).getJSONObject("goods");
+                    int productID = goods.getInt("productID");
+                    String name = goods.getString("name");
+                    double productPrice = goods.getDouble("price");
+                    int stock = goods.getInt("stock");
+                    int sales = goods.getInt("sales");
+                    int productAmount = goodsList.getJSONObject(i).getInt("quantity");
+                    String timeStr = user.getString("time");
 
                     // 将字符串转换为 LocalDate
                     LocalDate time = null;
@@ -209,22 +213,35 @@ public class store_page {
                     }
 
                     // 准备插入语句
-                    String insertQuery = "INSERT INTO producttransactionrecord (productID, productPrice, productAmount, cardNumber, transactionTime, remark) " +
+                    String insertQuery = "INSERT INTO producttransactionrecord (productID, name, productPrice, productAmount, cardNumber, time) " +
                             "VALUES (?, ?, ?, ?, ?, ?)";
 
                     // 执行插入操作
-                    int rowsAffected = dataAccessObject.executeInsert(insertQuery, productID, productPrice, productAmount, cardNumber, time, remark);
+                    int rowsAffected = dataAccessObject.executeInsert(insertQuery, productID, name, productPrice, productAmount, CardNumber, time);
 
                     // 检查插入是否成功
                     if (rowsAffected > 0) {
                         object.put("status", "success");
-                        object.put("message", "Transaction recorded successfully.");
+                        // 准备更新语句
+                        String updateQuery = "UPDATE product SET stock = ?, sales = ? WHERE productID = ?";
+
+                        // 执行更新操作
+                        int productRowsAffected = dataAccessObject.executeUpdate(updateQuery, stock - 1, sales + 1, productID);
+
+                        if (productRowsAffected > 0) {
+                            //object.put("status", "success");
+                            //object.put("message", "Product information updated successfully.");
+                        } else {
+                            object.put("status", "error");
+                            object.put("message", "Failed to update goods information.");
+                        }
                     } else {
                         object.put("status", "error");
                         object.put("message", "Failed to record transaction.");
                         break;
                     }
                 }
+                object.put("message", "Transaction recorded successfully.");
             } else {
                 object.put("status", "error");
                 object.put("message", "Admin authentication failed.");
@@ -271,21 +288,22 @@ public class store_page {
 
             if (isAuthenticated) {
                 // 获取传回的订单列表
-                User tempUser = (User) JSONObject.toBean(user, User.class);
-                Product product = tempUser.getProduct();
-                String name = product.getName();
-                double price = product.getPrice();
-                String pictureLink = product.getPictureLink();
-                int stock = product.getStock();
-                int sales = product.getSales();
-                String description = product.getDescription();
+                JSONObject newGoods = user.getJSONObject("newGoods");
+
+                String name = newGoods.getString("name");
+                double price = newGoods.getDouble("price");
+                String pictureLink = newGoods.getString("pictureLink");
+                int stock = newGoods.getInt("stock");
+                int sales = 0;
+                String description = newGoods.getString("description");
+                String select = newGoods.getString("select");
 
                 // 准备插入语句
-                String insertQuery = "INSERT INTO product (name, price, pictureLink, stock, sales, description) " +
-                        "VALUES (?, ?, ?, ?, ?, ?)";
+                String insertQuery = "INSERT INTO product (name, price, pictureLink, stock, sales, description, `select`) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                 // 执行插入操作
-                int rowsAffected = dataAccessObject.executeInsert(insertQuery, name, price, pictureLink, stock, sales, description);
+                int rowsAffected = dataAccessObject.executeInsert(insertQuery, name, price, pictureLink, stock, sales, description, select);
 
                 // 检查插入是否成功
                 if (rowsAffected > 0) {
@@ -323,6 +341,11 @@ public class store_page {
             String Password = user.getString("password");
 
             String name = user.getString("searchText");
+            String select = user.getString("select");
+            if(Objects.equals(select, "全部") && name.isEmpty()) {
+                object = store_show(user);
+                return object;
+            }
 
             // 准备查询语句验证身份
             String Query = "SELECT * FROM user WHERE cardNumber = ?";
@@ -342,11 +365,19 @@ public class store_page {
             resultSet.close(); // 关闭 ResultSet
 
             if (isAuthenticated) {
-                // 准备查询语句以搜索学生
-                String searchQuery = "SELECT * FROM product WHERE name LIKE ?";
-
-                // 执行查询操作
-                ResultSet productResultSet = dataAccessObject.executeQuery(searchQuery, "%" + name + "%");
+                // 准备查询语句以搜索商品
+                String searchQuery = null;
+                ResultSet productResultSet = null;
+                if(Objects.equals(select, "全部")) {
+                    searchQuery = "SELECT * FROM product WHERE name LIKE ?";
+                    // 执行查询操作
+                    productResultSet = dataAccessObject.executeQuery(searchQuery, "%" + name + "%");
+                }
+                else {
+                    searchQuery = "SELECT * FROM product WHERE name LIKE ? AND select = ?";
+                    // 执行查询操作
+                    productResultSet = dataAccessObject.executeQuery(searchQuery, "%" + name + "%", select);
+                }
 
                 JSONArray productArray = new JSONArray();
                 while (productResultSet.next()) {
@@ -358,6 +389,7 @@ public class store_page {
                     productJson.put("stock", productResultSet.getInt("stock"));
                     productJson.put("sales", productResultSet.getInt("sales"));
                     productJson.put("description", productResultSet.getString("description"));
+                    productJson.put("select",productResultSet.getString("select"));
                     productArray.add(productJson);
                 }
 
@@ -366,11 +398,11 @@ public class store_page {
                 if (productArray.size() > 0) {
                     object.put("status", "success");
                     object.put("message", "Product information retrieved successfully.");
-                    object.put("students", productArray);
+                    object.put("product", productArray);
                 } else {
                     object.put("status", "error");
                     object.put("message", "No products found matching the search criteria.");
-                    object.put("students", new JSONArray());
+                    object.put("product", new JSONArray());
                 }
             } else {
                 object.put("status", "error");
@@ -400,15 +432,15 @@ public class store_page {
             String Password = user.getString("password");
 
             // 被修改商品的商品ID和修改后的信息
-            User tempUser = (User) JSONObject.toBean(user, User.class);
-            Product product = tempUser.getProduct();
-            int productID = product.getProductID();
-            String newName = product.getName();
-            double newPrice = product.getPrice();
-            String newPictureLink = product.getPictureLink();
-            int newStock = product.getStock();
-            int newSales = product.getSales();
-            String newDescription = product.getDescription();
+            JSONObject goods = user.getJSONObject("goods");
+            int productID = goods.getInt("productID");
+            String newName = goods.getString("name");
+            double newPrice = goods.getDouble("price");
+            String newPictureLink = goods.getString("pictureLink");
+            int newStock = goods.getInt("stock");
+            int newSales = goods.getInt("sales");
+            String newDescription = goods.getString("description");
+            String newSelect = goods.getString("select");
 
             // 准备查询语句验证身份
             String Query = "SELECT * FROM user WHERE cardNumber = ?";
@@ -429,12 +461,12 @@ public class store_page {
 
             if (isAuthenticated) {
                 // 准备更新语句
-                String updateQuery = "UPDATE product SET newName = ?, newPrice = ?, newPictureLink = ?, newStock = ?, newSales = ?, " +
-                        "newDescription = ? WHERE productID = ?";
+                String updateQuery = "UPDATE product SET name = ?, price = ?, pictureLink = ?, stock = ?, sales = ?, " +
+                        "description = ?, `select` = ? WHERE productID = ?";
 
                 // 执行更新操作
                 int rowsAffected = dataAccessObject.executeUpdate(updateQuery, newName, newPrice, newPictureLink,
-                        newStock, newSales, newDescription);
+                        newStock, newSales, newDescription, newSelect, productID);
 
                 if (rowsAffected > 0) {
                     object.put("status", "success");
@@ -472,9 +504,8 @@ public class store_page {
             String Password = user.getString("password");
 
             // 被删除商品的商品ID
-            User tempUser = (User) JSONObject.toBean(user, User.class);
-            Product product = tempUser.getProduct();
-            int productID = product.getProductID();
+            JSONObject goods = user.getJSONObject("goods");
+            int productID = goods.getInt("productID");
 
             // 准备查询语句验证身份
             String Query = "SELECT * FROM user WHERE cardNumber = ?";
@@ -563,6 +594,7 @@ public class store_page {
                 while (transactionResultSet.next()) {
                     JSONObject transactionObject = new JSONObject();
                     transactionObject.put("productID", transactionResultSet.getInt("productID"));
+                    transactionObject.put("name", transactionResultSet.getString("name"));
                     transactionObject.put("productPrice", transactionResultSet.getDouble("productPrice"));
                     transactionObject.put("productAmount", transactionResultSet.getInt("productAmount"));
                     transactionObject.put("cardNumber", transactionResultSet.getInt("cardNumber"));
@@ -581,6 +613,10 @@ public class store_page {
                     // 将交易记录添加到 JSONArray 中
                     transactionsArray.add(transactionObject);
                 }
+                transactionResultSet.close(); // 关闭交易结果集
+
+                // 将交易记录JSONArray添加到返回的JSONObject中
+                object.put("transactions", transactionsArray);
             } else {
                 object.put("status", "error");
                 object.put("message", "User authentication failed.");

@@ -36,7 +36,7 @@ public class Main {
         functionMap.put("studentStatus_search",studentStatus::studentStatus_search);
         functionMap.put("store_show",store::store_show);
         functionMap.put("store_getMyTransaction",store::store_getMyTransaction);
-        functionMap.put("store_payTransaction",store::store_payTransaction);
+        functionMap.put("store_buygoods",store::store_buygoods);
         functionMap.put("store_addProduct",store::store_addProduct);
         functionMap.put("store_search",store::store_search);
         functionMap.put("store_change",store::store_change);

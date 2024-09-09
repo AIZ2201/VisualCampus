@@ -8,6 +8,7 @@ public class Product {
     int stock;
     int sales;
     String description;
+    String select;
 
     public int getProductID() { return productID; }
     public void setProductID(int productID) { this.productID = productID; }
@@ -47,4 +48,6 @@ public class Product {
     public void setDescription(String description) {
         this.description = description;
     }
+    public  String getSelect () { return  select; }
+    public void setSelect(String select) { this.select = select; }
 }
