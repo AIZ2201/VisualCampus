@@ -1,6 +1,7 @@
 import com.output.login_page;//引入新页面功能时记得引入对应java类
 import com.output.studentStatus_page;
 import com.output.store_page;
+import com.output.bank_page;
 import net.sf.json.JSONObject;
 
 import javax.crypto.Cipher;
@@ -27,6 +28,7 @@ public class Main {
         login_page login = new login_page();//new 登录页面
         studentStatus_page studentStatus = new studentStatus_page();
         store_page store = new store_page();
+        bank_page bank = new bank_page();
 
         // 创建一个函数映射表  后续的新操作都添加到表中，注意格式
         Map<String, Function<JSONObject, JSONObject>> functionMap = new HashMap<>();
@@ -34,6 +36,8 @@ public class Main {
         functionMap.put("studentStatus_view",studentStatus::studentStatus_view);
         functionMap.put("studentStatus_change",studentStatus::studentStatus_change);
         functionMap.put("studentStatus_search",studentStatus::studentStatus_search);
+        functionMap.put("studentStatus_add",studentStatus::studentStatus_add);
+        functionMap.put("studentStatus_delete",studentStatus::studentStatus_delete);
         functionMap.put("store_show",store::store_show);
         functionMap.put("store_getMyTransaction",store::store_getMyTransaction);
         functionMap.put("store_buygoods",store::store_buygoods);
@@ -42,6 +46,9 @@ public class Main {
         functionMap.put("store_change",store::store_change);
         functionMap.put("store_delete",store::store_delete);
         functionMap.put("store_getAllTransaction",store::store_getAllTransaction);
+        functionMap.put("bank_view",bank::bank_view);
+        functionMap.put("bank_recharge",bank::bank_recharge);
+        functionMap.put("bank_withdraw",bank::bank_withdraw);
 
         try (ServerSocket serverSocket = new ServerSocket(4444)) {
             System.out.println("服务器已启动，等待连接...");

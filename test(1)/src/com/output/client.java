@@ -41,7 +41,7 @@ public class client {
 
             //System.out.println("operation:");
             //user.setOperation(in.nextLine());
-            user.setOperation("store_getAllTransaction");
+            user.setOperation("bank_view");
             if(Objects.equals(user.getOperation(), "login_submit"))
             {
                 System.out.println("cardNumber:");
@@ -207,7 +207,51 @@ public class client {
                 rw.write(jsonObject.toString()+"\n");
                 rw.flush();
             }
+            if(Objects.equals(user.getOperation(), "studentStatus_add"))
+            {
+                user.setCardNumber(111/*in.nextInt()*/);
+                user.setPassword("111"/*in.nextLine()*/);
+                user.setCardNumber(111);  // For testing, can be replaced with user input
+                user.setPassword("111");  // For testing, can be replaced with user input
+                // Create and set student information
+                student.setName("李华");
+                student.setCardNumber(213222212);
+                student.setStudentNumber("09022301");
+                student.setGender("FEMALE");
+                student.setMajor("计算机科学与技术");
+                student.setSchool("计算机学院");
+                student.setStudentStat("ON");
+                student.setEnrollment("2022-09-21");
+                student.setBirthPlace("江苏南京");
+                student.setPoliticalStat("Masses");
+                // Set student object in user
+                user.setStudent(student);
 
+                // 加密密码
+                String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+                user.setPassword(encryptedPassword);
+
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                System.out.println(jsonObject);
+                rw.write(jsonObject.toString()+"\n");
+                rw.flush();
+            }
+            if(Objects.equals(user.getOperation(), "studentStatus_delete"))
+            {
+                user.setCardNumber(111);  // For testing, can be replaced with user input
+                user.setPassword("111");  // For testing, can be replaced with user input
+                student.setCardNumber(213222212);
+                user.setStudent(student);
+
+                // 加密密码
+                String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+                user.setPassword(encryptedPassword);
+
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                System.out.println(jsonObject);
+                rw.write(jsonObject.toString()+"\n");
+                rw.flush();
+            }
 
             String response = br.readLine();
             if (response != null) {

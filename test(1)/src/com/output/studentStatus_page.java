@@ -228,4 +228,179 @@ public class studentStatus_page {
 
         return object; // 返回结果对象
     }
+
+    //学籍管理页面添加学籍操作的处理函数
+    public JSONObject studentStatus_add(JSONObject user){
+        JSONObject object = new JSONObject();
+        object.put("status", "failed");
+
+        try {
+            DataAccessObject dataAccessObject = new DataAccessObject();
+
+            // 获取客户端传来的cardnumber和password
+            int CardNumber = user.getInt("cardNumber");
+            String Password = user.getString("password");
+
+            // 准备查询语句验证用户身份
+            String query = "SELECT * FROM user WHERE cardNumber = ?";
+            ResultSet resultSet = dataAccessObject.executeQuery(query, CardNumber);
+
+            boolean isAuthenticated = false;
+
+            // 遍历结果集，验证用户密码
+            while (resultSet.next()) {
+                String dbPassword = resultSet.getString("password");
+                if (Password.equals(dbPassword)) {
+                    isAuthenticated = true;
+                    break; // 找到匹配项后跳出循环
+                }
+            }
+
+            resultSet.close(); // 关闭 ResultSet
+
+            if (isAuthenticated) {
+                // 获取传回的订单列表
+                JSONObject newStudent = user.getJSONObject("student");
+
+                int stuCardNumber = newStudent.getInt("cardNumber");
+                // 1. 校验 cardNumber 是否为 9 位数字
+                String cardNumberStr = String.valueOf(stuCardNumber);
+                if (cardNumberStr.length() != 9) {
+                    //System.out.println("卡号不合法：必须是9位数字");
+                    object.put("status", "error");
+                    object.put("message", "The card number's not legit.");
+                    return object;
+                }
+                // 2. 检查数据库中是否已经存在该卡号
+                String queryTemp = "SELECT COUNT(*) FROM student WHERE cardNumber = ?";
+                ResultSet resultSetTemp = dataAccessObject.executeQuery(queryTemp, stuCardNumber);
+
+                if (resultSetTemp.next()) {
+                    int count = resultSetTemp.getInt(1);
+                    if (count > 0) {
+                        //System.out.println("卡号已存在");
+                        object.put("status", "error");
+                        object.put("message", "Card number already exists.");
+                        return object;
+                    }
+                }
+                // 关闭结果集
+                resultSetTemp.close();
+
+                String stuPassword =  String.valueOf(stuCardNumber);
+                String name = newStudent.getString("name");
+                String studentNumber = newStudent.getString("studentNumber");
+                String gender = newStudent.getString("gender");
+                String major = newStudent.getString("major");
+                String school = newStudent.getString("school");
+                String studentStat = newStudent.getString("studentStat");
+                String enrollmentStr = newStudent.getString("enrollment");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                // 将字符串转换为 LocalDate
+                LocalDate enrollment = null;
+                try {
+                    enrollment = LocalDate.parse(enrollmentStr, formatter);
+                } catch (DateTimeParseException e) {
+                    // 处理解析异常，比如打印错误信息或采取其他措施
+                    System.out.println("Invalid date format for enrollment: " + enrollmentStr);
+                    // 可以选择抛出异常，或返回一个默认值
+                    // enrollment = LocalDate.now(); // 或者根据需要设置一个默认值
+                }
+                String birthPlath = newStudent.getString("birthPlace");
+                String politicalStat = newStudent.getString("politicalStat");
+
+                // 准备插入语句
+                String insertQuery = "INSERT INTO student (cardNumber, password, name, studentNumber, gender, major, school, studentStat, enrollment, birthPlace, politicalStat) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                String insertQuery2 = "INSERT INTO user (cardNumber, password, name, gender, balance, role) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)";
+
+                // 执行插入操作
+                int rowsAffected = dataAccessObject.executeInsert(insertQuery, stuCardNumber, stuPassword, name, studentNumber, gender, major, school, studentStat, enrollment, birthPlath, politicalStat);
+                int rowsAffected2 = dataAccessObject.executeInsert(insertQuery2, stuCardNumber, stuPassword, name, gender, 0, "学生");
+
+                // 检查插入是否成功
+                if (rowsAffected > 0) {
+                    object.put("status", "success");
+                    object.put("message", "Student added successfully.");
+                } else {
+                    object.put("status", "error");
+                    object.put("message", "Failed to add Product.");
+                }
+            } else {
+                object.put("status", "error");
+                object.put("message", "Authentication failed.");
+            }
+
+        } catch (SQLException e) {
+            // 处理异常的代码，例如打印异常信息
+            e.printStackTrace();
+            object.put("status", "error");
+            object.put("message", "Database error occurred.");
+        }
+
+        return object; // 返回结果对象
+    }
+
+    //学籍管理页面删除学生操作的处理函数
+    public JSONObject studentStatus_delete(JSONObject user){
+        JSONObject object = new JSONObject();
+        object.put("status", "failed");
+
+        try {
+            DataAccessObject dataAccessObject = new DataAccessObject();
+
+            // 获取客户端传来的cardnumber、password和被修改商品的信息
+            int CardNumber = user.getInt("cardNumber");
+            String Password = user.getString("password");
+            // 被删除学生的学生一卡通号
+            int cardNumber = user.getInt("studentCardNum");
+
+            // 准备查询语句验证身份
+            String Query = "SELECT * FROM user WHERE cardNumber = ?";
+            ResultSet resultSet = dataAccessObject.executeQuery(Query, CardNumber);
+
+            boolean isAuthenticated = false;
+
+            // 遍历结果集，验证密码
+            while (resultSet.next()) {
+                String dbPassword = resultSet.getString("password");
+                if (Password.equals(dbPassword)) {
+                    isAuthenticated = true;
+                    break;
+                }
+            }
+
+            resultSet.close(); // 关闭 ResultSet
+
+            if (isAuthenticated) {
+                // 准备删除语句
+                String deleteQuery = "DELETE FROM student WHERE cardNumber = ?";
+                String deleteQuery2 = "DELETE FROM user WHERE cardNumber = ?";
+
+                // 执行删除操作
+                int rowsAffected = dataAccessObject.executeDelete(deleteQuery, cardNumber);
+                int rowsAffected2 = dataAccessObject.executeDelete(deleteQuery2, cardNumber);
+
+                if (rowsAffected > 0) {
+                    object.put("status", "success");
+                    object.put("message", "Student information deleted successfully.");
+                } else {
+                    object.put("status", "error");
+                    object.put("message", "Failed to delete student information.");
+                }
+            } else {
+                object.put("status", "error");
+                object.put("message", "Authentication failed.");
+            }
+
+        } catch (SQLException e) {
+            // 处理异常的代码，例如打印异常信息
+            e.printStackTrace();
+            object.put("status", "error");
+            object.put("message", "Database error occurred.");
+        }
+
+        return object; // 返回结果对象
+    }
 }

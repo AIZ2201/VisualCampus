@@ -116,5 +116,31 @@
         <jarDirectory url="file://$MODULE_DIR$/../../../../../opencv/build/java" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../json/commons-beanutils-1.9.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../json/commons-collections-3.2.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../json/commons-lang-2.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../json/commons-logging-1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../json/ezmorph-1.0.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../json/json-lib-2.4-jdk15.jar!/" />
+          <root url="file://$MODULE_DIR$" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/src" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../mysql-connector-j-8.1.0/mysql-connector-j-8.1.0/mysql-connector-j-8.1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

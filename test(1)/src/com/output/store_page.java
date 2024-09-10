@@ -186,6 +186,7 @@ public class store_page {
                 }
             }
 
+            int balance = resultSet.getInt("balance");
             resultSet.close(); // 关闭 ResultSet
 
             if (isAuthenticated) {
@@ -222,6 +223,13 @@ public class store_page {
                     // 检查插入是否成功
                     if (rowsAffected > 0) {
                         object.put("status", "success");
+
+                        // 准备更新语句
+                        String updateQuery2 = "UPDATE user SET balance = ? WHERE cardNumber = ?";
+
+                        // 执行更新操作
+                        int rowsAffected2 = dataAccessObject.executeUpdate(updateQuery2, balance - productPrice * productAmount, cardnumber);
+
                         // 准备更新语句
                         String updateQuery = "UPDATE product SET stock = ?, sales = ? WHERE productID = ?";
 
