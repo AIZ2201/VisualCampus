@@ -1,6 +1,5 @@
 package com.output;
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -41,7 +40,7 @@ public class client {
 
             //System.out.println("operation:");
             //user.setOperation(in.nextLine());
-            user.setOperation("bank_view");
+            user.setOperation("studentStatus_view");
             if(Objects.equals(user.getOperation(), "login_submit"))
             {
                 System.out.println("cardNumber:");

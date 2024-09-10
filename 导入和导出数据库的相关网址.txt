@@ -1,0 +1,7 @@
+https://blog.csdn.net/weixin_50670076/article/details/136350060?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522BD14A968-09D7-4F5F-AE2D-4E8C3E7B19E6%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=BD14A968-09D7-4F5F-AE2D-4E8C3E7B19E6&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-136350060-null-null.142^v100^pc_search_result_base6&utm_term=Navicat&spm=1018.2226.3001.4187
+
+上为Navicat的安装教程，可用于数据库操作和数据库导入导出
+
+https://blog.csdn.net/jianxia801/article/details/84475988
+
+上为数据库迁移教程（不太好用，建议搜索使用“转储SQL文件”和“运行SQL文件”方法迁移数据库）
