@@ -84,6 +84,7 @@ public class store_page {
         return object; // 返回结果对象
     }
 
+    //商店页面猜你喜欢的处理函数
     public JSONObject store_guess(JSONObject user) {
         JSONObject object = new JSONObject();
         object.put("status", "failed");

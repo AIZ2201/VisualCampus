@@ -41,7 +41,21 @@ public class client {
 
             //System.out.println("operation:");
             //user.setOperation(in.nextLine());
-            user.setOperation("bank_view");
+            user.setOperation("store_guess");
+            if(Objects.equals(user.getOperation(), "store_guess"))
+            {
+                user.setCardNumber(111/*in.nextInt()*/);
+                user.setPassword("111"/*in.nextLine()*/);
+
+                // 加密密码
+                String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
+                user.setPassword(encryptedPassword);
+
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                System.out.println(jsonObject);
+                rw.write(jsonObject.toString()+"\n");
+                rw.flush();
+            }
             if(Objects.equals(user.getOperation(), "bank_view"))
             {
                 user.setCardNumber(123/*in.nextInt()*/);

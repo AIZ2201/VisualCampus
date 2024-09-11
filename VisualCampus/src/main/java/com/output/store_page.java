@@ -8,11 +8,133 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Objects;
+import java.util.*;
 
 public class store_page {
     private int cardnumber;
     private String password;
+
+    //商店页面猜你喜欢的处理函数
+    public JSONObject store_guess(JSONObject user) {
+        JSONObject object = new JSONObject();
+        object.put("status", "failed");
+
+        try {
+            DataAccessObject dataAccessObject = new DataAccessObject();
+            // 获取客户端传来的 cardnumber 和 password
+            int cardnumber = user.getInt("cardNumber");
+            String password = user.getString("password");
+
+            // 准备查询语句验证用户身份
+            String query = "SELECT * FROM user WHERE cardNumber = ?";
+            ResultSet resultSet = dataAccessObject.executeQuery(query, cardnumber);
+
+            boolean isAuthenticated = false;
+
+            // 遍历结果集，验证用户密码
+            while (resultSet.next()) {
+                String dbPassword = resultSet.getString("password");
+                if (password.equals(dbPassword)) {
+                    isAuthenticated = true;
+                    object.put("status", "success");
+                    break; // 找到匹配项后跳出循环
+                }
+            }
+
+            resultSet.close(); // 关闭 ResultSet
+
+            if (isAuthenticated) {
+                // 查询交易记录，按购买时间排序
+                String transactionQuery = "SELECT * FROM producttransactionrecord WHERE cardNumber = ? ORDER BY time ASC";
+                ResultSet transactionResultSet = dataAccessObject.executeQuery(transactionQuery, cardnumber);
+
+                // 使用 LRU 缓存存储最近购买的两类商品类型
+                LinkedHashMap<String, String> lruCache = new LinkedHashMap<String, String>(2, 0.75f, true) {
+                    protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+                        return size() > 2;  // 缓存最大容量为2
+                    }
+                };
+
+                // 遍历交易记录并更新 LRU 缓存
+                while (transactionResultSet.next()) {
+                    String productType = transactionResultSet.getString("select");  // 获取商品类型
+                    lruCache.put(productType, productType);  // 使用商品类型更新 LRU 缓存
+                }
+
+                transactionResultSet.close(); // 关闭交易记录结果集
+
+                // 获取缓存中最近的两类商品类型
+                List<String> recentProductTypes = new ArrayList<>(lruCache.values());
+
+                // 如果找到的商品类型少于2类，随机选择商品类型补足
+                if (recentProductTypes.size() < 2) {
+                    // 查询所有商品类型
+                    String allTypesQuery = "SELECT DISTINCT `select` FROM product";
+                    ResultSet allTypesResultSet = dataAccessObject.executeQuery(allTypesQuery);
+
+                    List<String> allProductTypes = new ArrayList<>();
+                    while (allTypesResultSet.next()) {
+                        allProductTypes.add(allTypesResultSet.getString("select"));
+                    }
+                    allTypesResultSet.close(); // 关闭结果集
+
+                    // 移除已经在 recentProductTypes 中的类型，避免重复
+                    allProductTypes.removeAll(recentProductTypes);
+
+                    // 随机选择商品类型来补足到2类
+                    Random random = new Random();
+                    while (recentProductTypes.size() < 2 && !allProductTypes.isEmpty()) {
+                        int randomIndex = random.nextInt(allProductTypes.size());
+                        String randomProductType = allProductTypes.remove(randomIndex);
+                        recentProductTypes.add(randomProductType);
+                    }
+                }
+
+                // 创建 JSONArray 来存储商品类型
+                JSONArray recommendedProducts = new JSONArray();
+
+                // 遍历缓存中的两类商品类型，查找并展示
+                for (String productType : recentProductTypes) {
+                    String productQuery = "SELECT * FROM product WHERE `select` = ?";
+                    ResultSet productResultSet = dataAccessObject.executeQuery(productQuery, productType);
+
+                    while (productResultSet.next()) {
+                        JSONObject productObject = new JSONObject();
+                        productObject.put("productID", productResultSet.getInt("productID"));
+                        productObject.put("name", productResultSet.getString("name"));
+                        productObject.put("price", productResultSet.getDouble("price"));
+                        productObject.put("pictureLink", productResultSet.getString("pictureLink"));
+                        productObject.put("stock", productResultSet.getInt("stock"));
+                        productObject.put("sales", productResultSet.getInt("sales"));
+                        productObject.put("description", productResultSet.getString("description"));
+                        productObject.put("select", productResultSet.getString("select"));
+
+                        recommendedProducts.add(productObject);  // 将商品信息添加到推荐列表中
+                    }
+
+                    productResultSet.close();  // 关闭商品结果集
+                }
+
+                // 随机打乱最终的商品推荐列表
+                Collections.shuffle(recommendedProducts);
+
+                // 将推荐的商品信息 JSONArray 添加到返回的 JSONObject 中
+                object.put("recommendedProducts", recommendedProducts);
+
+            } else {
+                object.put("status", "error");
+                object.put("message", "User authentication failed.");
+            }
+
+        } catch (SQLException e) {
+            // 处理异常的代码，例如打印异常信息
+            e.printStackTrace();
+            object.put("status", "error");
+            object.put("message", "Database error occurred.");
+        }
+
+        return object; // 返回结果对象
+    }
 
     //商店页面展示商品操作的处理函数
     public JSONObject store_show(JSONObject user) {
@@ -203,6 +325,7 @@ public class store_page {
                     int stock = goods.getInt("stock");
                     int sales = goods.getInt("sales");
                     int productAmount = goodsList.getJSONObject(i).getInt("quantity");
+                    String select = goods.getString("select");
                     String timeStr = user.getString("time");
 
                     // 将字符串转换为 LocalDate
@@ -215,11 +338,11 @@ public class store_page {
                     }
 
                     // 准备插入语句
-                    String insertQuery = "INSERT INTO producttransactionrecord (productID, name, productPrice, productAmount, cardNumber, time) " +
-                            "VALUES (?, ?, ?, ?, ?, ?)";
+                    String insertQuery = "INSERT INTO producttransactionrecord (productID, name, productPrice, productAmount, cardNumber, time, `select`) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                     // 执行插入操作
-                    int rowsAffected = dataAccessObject.executeInsert(insertQuery, productID, name, productPrice, productAmount, CardNumber, time);
+                    int rowsAffected = dataAccessObject.executeInsert(insertQuery, productID, name, productPrice, productAmount, CardNumber, time, select);
 
                     // 检查插入是否成功
                     if (rowsAffected > 0) {
@@ -235,7 +358,7 @@ public class store_page {
                         String updateQuery = "UPDATE product SET stock = ?, sales = ? WHERE productID = ?";
 
                         // 执行更新操作
-                        int productRowsAffected = dataAccessObject.executeUpdate(updateQuery, stock - 1, sales + 1, productID);
+                        int productRowsAffected = dataAccessObject.executeUpdate(updateQuery, stock - productAmount, sales + productAmount, productID);
 
                         if (productRowsAffected > 0) {
                             //object.put("status", "success");
@@ -383,7 +506,7 @@ public class store_page {
                     productResultSet = dataAccessObject.executeQuery(searchQuery, "%" + name + "%");
                 }
                 else {
-                    searchQuery = "SELECT * FROM product WHERE name LIKE ? AND select = ?";
+                    searchQuery = "SELECT * FROM product WHERE name LIKE ? AND `select` = ?";
                     // 执行查询操作
                     productResultSet = dataAccessObject.executeQuery(searchQuery, "%" + name + "%", select);
                 }

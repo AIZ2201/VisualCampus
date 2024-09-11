@@ -67,12 +67,15 @@ public class Main {
         functionMap.put("save_image",imageToDatabase::faceImageCompare);
         //导入成绩
         functionMap.put("import_grades",excelGrade::handleClientInput);
+        //教师详情
+        functionMap.put("teacher_course",controller::teacherForCourse);
         functionMap.put("studentStatus_view",studentStatus::studentStatus_view);
         functionMap.put("studentStatus_change",studentStatus::studentStatus_change);
         functionMap.put("studentStatus_search",studentStatus::studentStatus_search);
         functionMap.put("studentStatus_add",studentStatus::studentStatus_add);
         functionMap.put("studentStatus_delete",studentStatus::studentStatus_delete);
         functionMap.put("studentStatus_changePassword",studentStatus::studentStatus_changePassword);
+        functionMap.put("store_guess",store::store_guess);
         functionMap.put("store_show",store::store_show);
         functionMap.put("store_getMyTransaction",store::store_getMyTransaction);
         functionMap.put("store_buygoods",store::store_buygoods);

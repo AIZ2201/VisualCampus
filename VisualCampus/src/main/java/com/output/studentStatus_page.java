@@ -319,7 +319,7 @@ public class studentStatus_page {
 
                 // 执行插入操作
                 int rowsAffected = dataAccessObject.executeInsert(insertQuery, stuCardNumber, stuPassword, name, studentNumber, gender, major, school, studentStat, enrollment, birthPlath, politicalStat);
-                int rowsAffected2 = dataAccessObject.executeInsert(insertQuery2, stuCardNumber, stuPassword, name, gender, 0, "学生");
+                int rowsAffected2 = dataAccessObject.executeInsert(insertQuery2, stuCardNumber, stuPassword, name, gender, 0, "student");
 
                 // 检查插入是否成功
                 if (rowsAffected > 0) {

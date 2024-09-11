@@ -25,13 +25,14 @@ public class ExcelGrade {
             String fileContentBase64 = user.getString("fileContent");
 
             // 文件存储路径
-            String filePath = "D://grade_table/" + fileName;
+            String filePath = "D:\\AIZ\\大学文件\\学习\\Java技能实训\\tempGrade" + fileName;
 
             // 解码文件并保存到本地
             saveBase64File(fileContentBase64, filePath);
 
             // 解析 Excel 文件并将数据存入数据库
             processExcelFile(filePath);
+            object.put("status","success");
 
         } catch (SQLException e) {
             // 处理异常的代码，例如打印异常信息
@@ -65,9 +66,9 @@ public class ExcelGrade {
             e.printStackTrace();
         }
 
-        String jdbcURL = "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=true";
-        String username = "root";
-        String password = "mlyy720813";
+        String jdbcURL = "jdbc:mysql://localhost:3306/vcampus"; // 数据库名
+        String username = "root"; // 用户名为 root
+        String password = "123456"; // 密码
 
         try (InputStream inputStream = new FileInputStream(filePath);
              XSSFWorkbook workbook = new XSSFWorkbook(inputStream);

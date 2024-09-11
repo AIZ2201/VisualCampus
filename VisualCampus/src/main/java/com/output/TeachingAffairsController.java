@@ -926,5 +926,101 @@ public class TeachingAffairsController {
         return object;
     }
 
+    /*教师查看课程*/
+    public JSONObject teacherForCourse(JSONObject user) {
+        JSONObject object = new JSONObject();
+        object.put("status", "failed");
+
+        try {
+            DataAccessObject dataAccessObject = new DataAccessObject();
+            String teacherName = user.getString("teacherName");
+
+            // 准备查询语句获取课表记录
+            String query = "SELECT courseName, classroomName, capacity, weekRange, dayOfWeek, courseBegin, courseEnd, selectCount FROM teachingclassenter WHERE teacherName = ?";
+            ResultSet resultSet = dataAccessObject.executeQuery(query, teacherName);
+
+            if (!resultSet.isBeforeFirst()) { // 检查是否有返回结果
+                object.put("status", "not_found");
+                object.put("message", "No course found for the teaching.");
+            } else {
+                JSONArray coursesArray = new JSONArray();
+                while (resultSet.next()) {
+                    object.put("status", "success");
+
+                    // 提取课程信息
+                    JSONObject courseObject = new JSONObject();
+                    String courseName = resultSet.getString("courseName");
+                    courseObject.put("courseName", courseName);
+                    courseObject.put("classroomName", resultSet.getString("classroomName"));
+                    courseObject.put("capacity", resultSet.getInt("capacity"));
+                    courseObject.put("weekRange", resultSet.getString("weekRange"));
+
+                    // 将 dayOfWeek, courseBegin, courseEnd 放入数组中
+                    JSONArray dayOfWeekArray = new JSONArray();
+                    JSONArray courseBeginArray = new JSONArray();
+                    JSONArray courseEndArray = new JSONArray();
+
+                    // 仅调用一次 resultSet.next() 获取数据
+                    dayOfWeekArray.add(resultSet.getString("dayOfWeek"));
+                    courseBeginArray.add(resultSet.getString("courseBegin"));
+                    courseEndArray.add(resultSet.getString("courseEnd"));
+
+                    // 将 dayOfWeek, courseBegin, courseEnd 合并为 courseDate
+                    JSONArray courseDateArray = new JSONArray();
+                    for (int i = 0; i < dayOfWeekArray.size(); i++) {
+                        JSONArray courseEntry = new JSONArray();
+                        courseEntry.add(dayOfWeekArray.get(i));
+                        courseEntry.add(courseBeginArray.get(i));
+                        courseEntry.add(courseEndArray.get(i));
+
+                        // 将组合好的 courseEntry 放入 courseDateArray
+                        courseDateArray.add(courseEntry);
+                    }
+
+                    // 最终将 courseDateArray 放入 courseObject 中
+                    courseObject.put("courseDate", courseDateArray);
+                    courseObject.put("selectCount", resultSet.getInt("selectCount"));
+
+                    // 通过 teacherName 和 courseName 查询学生信息
+                    String studentQuery = "SELECT cardNumber FROM studentselectclass WHERE teacherName = ? AND courseName = ?";
+                    ResultSet studentResultSet = dataAccessObject.executeQuery(studentQuery, teacherName, courseName);
+
+                    JSONArray studentArray = new JSONArray();
+                    while (studentResultSet.next()) {
+                        String cardNumber = studentResultSet.getString("cardNumber");
+
+                        // 通过 cardNumber 查询 user 表中的学生姓名
+                        String userQuery = "SELECT name FROM user WHERE cardNumber = ?";
+                        ResultSet userResultSet = dataAccessObject.executeQuery(userQuery, cardNumber);
+
+                        if (userResultSet.next()) {
+                            JSONObject studentObject = new JSONObject();
+                            studentObject.put("cardNumber", cardNumber);
+                            studentObject.put("name", userResultSet.getString("name"));
+                            studentArray.add(studentObject);
+                        }
+                        userResultSet.close(); // 关闭查询结果集
+                    }
+                    studentResultSet.close(); // 关闭学生查询结果集
+
+                    // 将学生信息添加到 courseObject 中
+                    courseObject.put("students", studentArray);
+
+                    // 将 courseObject 加入 coursesArray
+                    coursesArray.add(courseObject);
+                }
+                object.put("teacher", coursesArray);
+
+                resultSet.close(); // 关闭 ResultSet
+            }
+
+        } catch (SQLException e) {
+            // 处理异常的代码，例如打印异常信息
+            e.printStackTrace();
+            object.put("status", "error");
+            object.put("message", "Database error occurred.");
+        }
+        return object;
+    }
 
 }
