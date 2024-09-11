@@ -1,5 +1,6 @@
 package com.output;
 
+import entity.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -40,11 +41,12 @@ public class client {
 
             //System.out.println("operation:");
             //user.setOperation(in.nextLine());
-            user.setOperation("store_guess");
-            if(Objects.equals(user.getOperation(),"store_guess"))
+            user.setOperation("bank_view");
+            if(Objects.equals(user.getOperation(), "bank_view"))
             {
-                user.setCardNumber(111);
-                user.setPassword("111");
+                user.setCardNumber(123/*in.nextInt()*/);
+                user.setPassword("1233"/*in.nextLine()*/);
+
                 // 加密密码
                 String encryptedPassword = encryptPassword(user.getPassword(), PUBLIC_KEY_STRING);
                 user.setPassword(encryptedPassword);
