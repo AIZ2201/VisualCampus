@@ -150,9 +150,9 @@ class ClientHandler extends Thread {
                     "select_send", "change_password", "check_evaluate", "add_course", "send_course",
                     "save_image", "import_grades", "select_enter", "student_select", "evaluate_enter",
                     "student_evaluate", "check_schedule", "student_deselect", "check_score", "check_class",
-                    "library_getMes", "library_borrowBooks", "library_getBooks", "library_getUser",
-                    "library_returnBooks", "library_renewBooks", "library_searchBooks", "library_updBooks",
-                    "library_addBook", "library_remBook", "library_addCom", "library_remCom"
+                    "teacher_course", "library_getMes", "library_borrowBooks", "library_getBooks",
+                    "library_getUser", "library_returnBooks", "library_renewBooks", "library_searchBooks",
+                    "library_updBooks", "library_addBook", "library_remBook", "library_addCom", "library_remCom"
             ));
 
             // 如果 operation 不在要跳过的操作列表中，则进行密码解密

@@ -169,9 +169,9 @@ public class FaceCompare {
     private String serviceId;
     private Integer cardNumber;
 
-    static String url = "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=true";
-    static String username = "root";
-    static String password = "mlyy720813";
+    String url = "jdbc:mysql://localhost:3306/vcampus"; // 数据库名
+    String username = "root"; // 用户名为 root
+    String password = "123456"; // 密码
 
     public FaceCompare(String requestUrl, String appid, String apiSecret, String apiKey, String imagePath1, String imagePath2, String serviceId,Integer cardNumber) {
         this.requestUrl = requestUrl;

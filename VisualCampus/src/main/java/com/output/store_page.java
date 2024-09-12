@@ -312,9 +312,32 @@ public class store_page {
             int balance = resultSet.getInt("balance");
             resultSet.close(); // 关闭 ResultSet
 
+            double allPrice = 0;
+
             if (isAuthenticated) {
+
                 // 获取传回的订单列表
                 JSONArray goodsList = user.getJSONArray("goodsList");
+                for(int i = 0; i <goodsList.size(); i++) {
+                    JSONObject tempGoods = goodsList.getJSONObject(i).getJSONObject("goods");
+                    allPrice += tempGoods.getDouble("price") * goodsList.getJSONObject(i).getInt("quantity");
+                }
+
+                // 准备查询语句验证用户余额
+                String balanceQuery = "SELECT * FROM user WHERE cardNumber = ?";
+                ResultSet balanceResultSet = dataAccessObject.executeQuery(balanceQuery, CardNumber);
+
+                // 遍历结果集，验证用户余额是否充足
+                while (balanceResultSet.next()) {
+                    int tempBalance = balanceResultSet.getInt("balance");
+                    if (tempBalance < allPrice) {
+                        object.put("status", "error");
+                        object.put("message", "余额不足，购买失败");
+                        return object;
+                    }
+                }
+
+                balanceResultSet.close();
 
                 // 遍历每个订单，插入到数据库
                 for (int i = 0; i < goodsList.size(); i++) {

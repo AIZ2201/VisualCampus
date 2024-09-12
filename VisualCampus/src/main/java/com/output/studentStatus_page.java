@@ -123,12 +123,17 @@ public class studentStatus_page {
                 // 准备更新语句
                 String updateQuery = "UPDATE student SET name = ?, studentNumber = ?, gender = ?, major = ?, school = ?, " +
                         "studentStat = ?, enrollment = ?, birthPlace = ?, politicalStat = ? WHERE cardNumber = ?";
+                String updateQuery2 = "UPDATE user SET name = ?, gender = ? WHERE cardNumber = ?";
+                String updateQuery3 = "UPDATE libraryuser SET userName = ? WHERE cardNumber = ?";
 
                 // 执行更新操作
                 int rowsAffected = dataAccessObject.executeUpdate(updateQuery, newName, newStudentNumber, newGender,
                         newMajor, newSchool, newStudentStat, newEnrollment, newBirthPlace, newPoliticalStat, studentCardNumber);
+                int rowsAffected2 = dataAccessObject.executeUpdate(updateQuery2, newName, newGender, studentCardNumber);
+                int rowsAffected3 = dataAccessObject.executeUpdate(updateQuery3, newName, studentCardNumber);
 
-                if (rowsAffected > 0) {
+
+                if (rowsAffected > 0 && rowsAffected2 > 0 && rowsAffected3 > 0) {
                     object.put("status", "success");
                     object.put("message", "Student information updated successfully.");
                 } else {
@@ -316,13 +321,16 @@ public class studentStatus_page {
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 String insertQuery2 = "INSERT INTO user (cardNumber, password, name, gender, balance, role) " +
                         "VALUES (?, ?, ?, ?, ?, ?)";
+                String insertQuery3 = "INSERT INTO libraryuser (userId, userName, userBorrowedNum, userMaxBorrowNum, userStatus) " +
+                        "VALUES (?, ?, ?, ?, ?)";
 
                 // 执行插入操作
                 int rowsAffected = dataAccessObject.executeInsert(insertQuery, stuCardNumber, stuPassword, name, studentNumber, gender, major, school, studentStat, enrollment, birthPlath, politicalStat);
                 int rowsAffected2 = dataAccessObject.executeInsert(insertQuery2, stuCardNumber, stuPassword, name, gender, 0, "student");
+                int rowsAffected3 = dataAccessObject.executeInsert(insertQuery3, stuCardNumber, name, 0, 10, "student");
 
                 // 检查插入是否成功
-                if (rowsAffected > 0) {
+                if (rowsAffected > 0 && rowsAffected2 > 0 && rowsAffected3 > 0) {
                     object.put("status", "success");
                     object.put("message", "Student added successfully.");
                 } else {
@@ -379,12 +387,14 @@ public class studentStatus_page {
                 // 准备删除语句
                 String deleteQuery = "DELETE FROM student WHERE cardNumber = ?";
                 String deleteQuery2 = "DELETE FROM user WHERE cardNumber = ?";
+                String deleteQuery3 = "DELETE FROM libraryuser WHERE cardNumber = ?";
 
                 // 执行删除操作
                 int rowsAffected = dataAccessObject.executeDelete(deleteQuery, cardNumber);
                 int rowsAffected2 = dataAccessObject.executeDelete(deleteQuery2, cardNumber);
+                int rowsAffected3 = dataAccessObject.executeDelete(deleteQuery3, cardNumber);
 
-                if (rowsAffected > 0) {
+                if (rowsAffected > 0 && rowsAffected2 > 0 && rowsAffected3 > 0) {
                     object.put("status", "success");
                     object.put("message", "Student information deleted successfully.");
                 } else {

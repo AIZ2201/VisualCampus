@@ -93,9 +93,11 @@ public class login_page {
                 } else {
                     // 更新密码到数据库
                     String updateQuery = "UPDATE user SET password = ? WHERE cardNumber = ?";
+                    String updateQuery2 = "UPDATE student SET password = ? WHERE cardNumber = ?";
                     int rowsAffected = dataAccessObject.executeUpdate(updateQuery, newPassword, cardnumber);
+                    int rowsAffected2 = dataAccessObject.executeUpdate(updateQuery2, newPassword, cardnumber);
 
-                    if (rowsAffected > 0) {
+                    if (rowsAffected > 0 && rowsAffected2 > 0) {
                         object.put("status", "success");
                         passwordUpdated = true;
                     } else {
