@@ -124,7 +124,7 @@ public class studentStatus_page {
                 String updateQuery = "UPDATE student SET name = ?, studentNumber = ?, gender = ?, major = ?, school = ?, " +
                         "studentStat = ?, enrollment = ?, birthPlace = ?, politicalStat = ? WHERE cardNumber = ?";
                 String updateQuery2 = "UPDATE user SET name = ?, gender = ? WHERE cardNumber = ?";
-                String updateQuery3 = "UPDATE libraryuser SET userName = ? WHERE cardNumber = ?";
+                String updateQuery3 = "UPDATE libraryuser SET userName = ? WHERE userId = ?";
 
                 // 执行更新操作
                 int rowsAffected = dataAccessObject.executeUpdate(updateQuery, newName, newStudentNumber, newGender,
@@ -332,7 +332,7 @@ public class studentStatus_page {
                 // 检查插入是否成功
                 if (rowsAffected > 0 && rowsAffected2 > 0 && rowsAffected3 > 0) {
                     object.put("status", "success");
-                    object.put("message", "Student added successfully.");
+                    object.put("message", "添加学生成功");
                 } else {
                     object.put("status", "error");
                     object.put("message", "Failed to add Product.");
@@ -387,7 +387,7 @@ public class studentStatus_page {
                 // 准备删除语句
                 String deleteQuery = "DELETE FROM student WHERE cardNumber = ?";
                 String deleteQuery2 = "DELETE FROM user WHERE cardNumber = ?";
-                String deleteQuery3 = "DELETE FROM libraryuser WHERE cardNumber = ?";
+                String deleteQuery3 = "DELETE FROM libraryuser WHERE userId = ?";
 
                 // 执行删除操作
                 int rowsAffected = dataAccessObject.executeDelete(deleteQuery, cardNumber);
@@ -396,10 +396,10 @@ public class studentStatus_page {
 
                 if (rowsAffected > 0 && rowsAffected2 > 0 && rowsAffected3 > 0) {
                     object.put("status", "success");
-                    object.put("message", "Student information deleted successfully.");
+                    object.put("message", "学生退学成功");
                 } else {
                     object.put("status", "error");
-                    object.put("message", "Failed to delete student information.");
+                    object.put("message", "学生退学失败");
                 }
             } else {
                 object.put("status", "error");

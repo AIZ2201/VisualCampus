@@ -309,7 +309,7 @@ public class store_page {
                 }
             }
 
-            int balance = resultSet.getInt("balance");
+            double balance = resultSet.getInt("balance");
             resultSet.close(); // 关闭 ResultSet
 
             double allPrice = 0;
@@ -351,6 +351,7 @@ public class store_page {
                     String select = goods.getString("select");
                     String timeStr = user.getString("time");
 
+                    balance -= productAmount * productPrice;
                     // 将字符串转换为 LocalDate
                     LocalDate time = null;
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -375,7 +376,7 @@ public class store_page {
                         String updateQuery2 = "UPDATE user SET balance = ? WHERE cardNumber = ?";
 
                         // 执行更新操作
-                        int rowsAffected2 = dataAccessObject.executeUpdate(updateQuery2, balance - productPrice * productAmount, cardnumber);
+                        int rowsAffected2 = dataAccessObject.executeUpdate(updateQuery2, balance, CardNumber);
 
                         // 准备更新语句
                         String updateQuery = "UPDATE product SET stock = ?, sales = ? WHERE productID = ?";
@@ -383,7 +384,7 @@ public class store_page {
                         // 执行更新操作
                         int productRowsAffected = dataAccessObject.executeUpdate(updateQuery, stock - productAmount, sales + productAmount, productID);
 
-                        if (productRowsAffected > 0) {
+                        if (productRowsAffected > 0 && rowsAffected2 > 0) {
                             //object.put("status", "success");
                             //object.put("message", "Product information updated successfully.");
                         } else {
@@ -762,8 +763,8 @@ public class store_page {
                         transactionObject.put("time", formattedTime);
                     }
 
-                    // 获取备注
                     transactionObject.put("remark", transactionResultSet.getString("remark"));
+                    transactionObject.put("select", transactionResultSet.getString("select"));
 
                     // 将交易记录添加到 JSONArray 中
                     transactionsArray.add(transactionObject);

@@ -853,6 +853,83 @@ public class library_page {
         return response;
     }
 
+    public JSONObject library_alltran(JSONObject user) {
+        JSONObject object = new JSONObject();
+        object.put("status", "failed");
+
+        try {
+            DataAccessObject dataAccessObject = new DataAccessObject();
+
+            // 获取管理员的卡号
+            int adminCardNumber = user.getInt("cardNumber");
+
+            // 验证是否为管理员
+            String adminQuery = "SELECT * FROM user WHERE cardNumber = ? AND role = 'admin'";
+            ResultSet adminResultSet = dataAccessObject.executeQuery(adminQuery, adminCardNumber);
+
+            if (!adminResultSet.isBeforeFirst()) { // 检查是否有返回结果
+                object.put("status", "not_authorized");
+                object.put("message", "User is not authorized as admin.");
+                adminResultSet.close();
+                return object;
+            }
+
+            adminResultSet.close(); // 关闭 ResultSet
+
+            // 准备查询语句获取所有交易记录
+            String query = "SELECT * FROM librarytran";
+            ResultSet librarytran = dataAccessObject.executeQuery(query);
+
+            if (!librarytran.isBeforeFirst()) { // 检查是否有交易记录
+                object.put("status", "not_found");
+                object.put("message", "No transactions found.");
+            } else {
+                JSONArray transactionsArray = new JSONArray();
+
+                while (librarytran.next()) {
+                    JSONObject transObject = new JSONObject();
+
+                    // 提取交易信息
+                    transObject.put("tranId", librarytran.getString("tranId"));
+                    transObject.put("tranBorrowTime", librarytran.getTimestamp("tranBorrowTime").toString());
+                    transObject.put("tranDueTime", librarytran.getTimestamp("tranDueTime").toString());
+                    transObject.put("tranBookId", librarytran.getString("tranBookId"));
+                    transObject.put("tranUserId", librarytran.getString("tranUserId"));
+                    transObject.put("tranIsbn", librarytran.getString("tranIsbn"));
+
+                    // 根据 bookId 查询书名
+                    String bookNameQuery = "SELECT bookName FROM librarybook WHERE bookId = ?";
+                    ResultSet bookResultSet = dataAccessObject.executeQuery(bookNameQuery, librarytran.getString("tranBookId"));
+
+                    String bookName = "";
+                    if (bookResultSet.next()) { // 如果查到书名
+                        bookName = bookResultSet.getString("bookName");
+                    } else {
+                        bookName = "Unknown Book"; // 处理未找到书名的情况
+                    }
+                    transObject.put("bookName", bookName);
+                    bookResultSet.close(); // 关闭结果集
+
+                    // 将每条交易记录添加到 JSONArray 中
+                    transactionsArray.add(transObject);
+                }
+
+                // 将交易记录添加到返回对象中
+                object.put("status", "success");
+                object.put("transactions", transactionsArray);
+
+                librarytran.close(); // 关闭交易记录的 ResultSet
+            }
+
+        } catch (SQLException e) {
+            // 处理 SQL 异常
+            e.printStackTrace();
+            object.put("status", "error");
+            object.put("message", "Database error occurred.");
+        }
+
+        return object; // 返回结果对象
+    }
 
 }
 

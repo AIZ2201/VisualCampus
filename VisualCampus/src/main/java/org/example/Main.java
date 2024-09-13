@@ -99,6 +99,7 @@ public class Main {
         functionMap.put("library_addCom",library::library_addcom);
         functionMap.put("library_remCom",library::library_removecom);
         functionMap.put("library_getMes",library::library_message);
+        functionMap.put("library_alltran",library::library_alltran);
 
 
         try (ServerSocket serverSocket = new ServerSocket(4444)) {
@@ -152,7 +153,8 @@ class ClientHandler extends Thread {
                     "student_evaluate", "check_schedule", "student_deselect", "check_score", "check_class",
                     "teacher_course", "library_getMes", "library_borrowBooks", "library_getBooks",
                     "library_getUser", "library_returnBooks", "library_renewBooks", "library_searchBooks",
-                    "library_updBooks", "library_addBook", "library_remBook", "library_addCom", "library_remCom"
+                    "library_updBooks", "library_addBook", "library_remBook", "library_addCom", "library_remCom",
+                    "library_alltran"
             ));
 
             // 如果 operation 不在要跳过的操作列表中，则进行密码解密

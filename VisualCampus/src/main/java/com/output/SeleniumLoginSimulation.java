@@ -122,9 +122,6 @@ public class SeleniumLoginSimulation {
                     By.xpath("//div[@class='card-btn blue' and @data-action='xspj立即评教']")));
             evaluateButton.click();
 
-
-
-
             selectScoreBasedOnTitle(driver, wait, "1、我对这门课程和老师的总体评价", 10);
             selectScoreBasedOnTitle(driver, wait, "2、老师课堂无不良言论，价值导向积极，体现了“立德树人”的师者风范。", 10);
             selectScoreBasedOnTitle(driver, wait, "3、老师能够让我了解课程的价值，激发我的学习热情。", 10);
@@ -141,13 +138,6 @@ public class SeleniumLoginSimulation {
 
             WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("保存")));
             saveButton.click();
-
-
-
-
-
-
-
 
 
         } catch (Exception e) {

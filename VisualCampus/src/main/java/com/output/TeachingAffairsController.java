@@ -2,13 +2,20 @@ package com.output;
 import DataSQL.DataAccessObject;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.output.SeleniumLoginSimulation.readCredentials;
 
 public class TeachingAffairsController {
 
@@ -215,6 +222,24 @@ public class TeachingAffairsController {
                     String insert = "INSERT INTO evaluationofteaching(cardNumber, courseName, scores,isEvaluated,teacherName) VALUES (?, ?, ?, ?,?)";
                     row = dataAccessObject.executeInsert(insert, studentID,courseName,scoreGet, true,teacherName);
 
+                    // 调用评教脚本 (Selenium)
+                    // 初始化 WebDriver 和 WebDriverWait
+                    System.setProperty("webdriver.gecko.driver", "C:\\Program Files\\Java\\jdk-21\\bin\\geckodriver.exe");
+                    FirefoxOptions options = new FirefoxOptions();
+                    options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0");
+                    WebDriver driver = new FirefoxDriver(options);
+                    WebDriverWait wait = new WebDriverWait(driver, 20);  // 等待最多 20 秒
+
+                    // 读取 credentials.txt 文件中的 userId 和 password
+                    String[] credentials = readCredentials("../credentials.txt"); // 确保路径正确
+                    String userId = credentials[0];
+                    String password = credentials[1];
+
+                    // 调用 `studentEvaluation` 方法执行评教操作
+                    evaluationScripts.studentEvaluation(driver, wait, userId, password);
+
+                    object.put("evaluation_status", "evaluation_completed");
+
                     if(row>0)
                     {
                         object.put("status", "success");
@@ -230,6 +255,8 @@ public class TeachingAffairsController {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         } catch (SQLException e) {
             // 处理异常的代码，例如打印异常信息
@@ -297,7 +324,7 @@ public class TeachingAffairsController {
                 List<Integer> cardNumbers = entry.getValue(); // 获取与该课程相关的学生卡号列表
 
                 List<Double> averageScores = new ArrayList<>();
-                int numberOfQuestions = 4; // 假设有4个问题
+                int numberOfQuestions = 11; // 假设有4个问题
                 for (int i = 0; i < numberOfQuestions; i++) {
                     averageScores.add(0.0);
                 }
@@ -375,7 +402,26 @@ public class TeachingAffairsController {
         qqGroups.add(354243433);
         qqGroups.add(537463222);
         qqGroups.add(563234556);
-        qqGroups.add(235654754);
+        qqGroups.add(235623754);
+        qqGroups.add(235654714);
+        qqGroups.add(235654707);
+        qqGroups.add(235654643);
+        qqGroups.add(235653654);
+        qqGroups.add(235234754);
+        qqGroups.add(244234754);
+        qqGroups.add(255234754);
+        qqGroups.add(265234754);
+        qqGroups.add(365234754);
+        qqGroups.add(465234754);
+        qqGroups.add(565234754);
+        qqGroups.add(665234754);
+        qqGroups.add(765234754);
+        qqGroups.add(865234754);
+        qqGroups.add(965234754);
+        qqGroups.add(315234754);
+        qqGroups.add(325234754);
+        qqGroups.add(335234754);
+        qqGroups.add(345234754);
         //上课星期映射
         Map<String, Integer> dayOfWeekMap = new HashMap<>();
         dayOfWeekMap.put("周一", 1);
@@ -503,9 +549,9 @@ public class TeachingAffairsController {
                             String timeRangeJson = JSONArray.fromObject(timeList).toString();
 
                             String insertIntoSelectCourse = "INSERT INTO studentselectclass(cardNumber,courseName,teacherName,qqGroup, classroomName,duration," +
-                                    "week,time,introduction) VALUES (?, ?, ?, ?,?,?,?,?,?)";
-                            int row3 = dataAccessObject.executeInsert(insertIntoSelectCourse, studentID,courseName, teacherName,qqGroups.get(qq),classroomName,weekRange,dayOfWeekNumberJson,
-                                    timeRangeJson,courseIntroduction.get(qq));
+                                    "week,time,introduction) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                            int row3 = dataAccessObject.executeInsert(insertIntoSelectCourse, studentID, courseName, teacherName, qqGroups.get(qq), classroomName, weekRange, dayOfWeekNumberJson,
+                                    timeRangeJson, courseIntroduction.get(qq));
 
                             if (row3 > 0) {
                                 object.put("extraMessage_2", "Data also inserted into studentselectclass table.");
