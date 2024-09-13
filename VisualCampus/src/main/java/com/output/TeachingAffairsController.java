@@ -396,7 +396,8 @@ public class TeachingAffairsController {
         courseIntroduction.add("一门很高级的课程");
         courseIntroduction.add("一门超级好的课程");
         courseIntroduction.add("一门极其好的课程");
-        //qq群号映射
+
+        //qq群号映射（这里为了简便直接在后端提供qq群号） 这里的qq群号均为虚拟的模拟群号，且群号数量得大于存入的课程数
         List<Integer> qqGroups = new ArrayList<>();
         qqGroups.add(243512334);
         qqGroups.add(354243433);
@@ -422,6 +423,7 @@ public class TeachingAffairsController {
         qqGroups.add(325234754);
         qqGroups.add(335234754);
         qqGroups.add(345234754);
+
         //上课星期映射
         Map<String, Integer> dayOfWeekMap = new HashMap<>();
         dayOfWeekMap.put("周一", 1);
