@@ -1,9 +1,10 @@
 # VisualCampus
-Summer School Professional Skills Practical Training Major Assignment (incomplete)
+Summer School Professional Skills Practical Training Major Assignment (Completed, front-end code and exe not added yet)
+暑期学校专业技能实训大作业（已完成，暂未添加前端代码和exe）
 
 后端使用intellij IDEA Java进行编程，采用Maven架构。
 
-理论部署步骤：
+后端（服务器端）理论部署步骤：
 
 1、部署VisualCampus文件夹
 
@@ -19,12 +20,14 @@ Summer School Professional Skills Practical Training Major Assignment (incomplet
  
 	jdk 21
 
-后端代码已整合完成，还剩下极少数功能未测试，可能有部分小bug未更改
+后端代码已整合完成，展示用功能已测试，展示时基本无bug出现，可能有部分小bug未发现
 
-现有评教脚本但未与前端对接，脚本中的userId和password需在项目文件夹（VisualCampus）外建立credentials.txt文件并将一卡通号和密码按如下格式输入即可（默认相对路径为项目文件夹外的credentials.txt，源代码中路径为"../credentials.txt"）
+现有评教脚本已经与前端对接完成，不过为了防止隐私信息泄露这里脚本并未接收前端传回的数据，固定在评教时自动给王世杰老师的专业技能实训课程进行评教，且评教分数固定为10，但是脚本接口已给出，可以根据需求进行修改
+
+脚本中的userId和password需在项目文件夹（VisualCampus）外建立credentials.txt文件并将一卡通号和密码按如下格式输入即可（默认相对路径为项目文件夹外的credentials.txt，源代码中路径为"../credentials.txt"）
 
 credentials.txt文件中格式：
 
-userId=yourUserId
+	userId=yourUserId
 
-password=yourPassword
+	password=yourPassword
