@@ -1,6 +1,7 @@
 # VisualCampus
 Summer School Professional Skills Practical Training Major Assignment (Completed, front-end code and exe not added yet)
-暑期学校专业技能实训大作业（已完成，暂未添加前端代码和exe）
+
+暑期学校专业技能实训大作业（已完成，现已添加前端代码和前端exe）
 
 后端使用intellij IDEA Java进行编程，采用Maven架构。
 
