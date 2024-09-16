@@ -1,9 +1,32 @@
-# VisualCampus
-Summer School Professional Skills Practical Training Major Assignment (Completed, front-end code and exe not added yet)
+# SEU-SummerSchool-VisualCampus
+Summer School Professional Skills Practical Training Major Assignment (Completed, now adding front-end code and front-end exe)
 
-暑期学校专业技能实训大作业（已完成，现已添加前端代码和前端exe）
+本项目为东南大学 2022 级计算机科学与技术专业暑期学校专业技能实训项目VisualCampus（已完成，现已添加前端代码和前端exe）
+
+本项目由以下 5 位本科生完成，欢迎访问他们的 GitHub 主页（有两位暂未加入）
+
+[AIZ2207](https://github.com/AIZ2201),
+[moveon](https://github.com/hxk77882),
+[Yishu Wang](https://github.com/seuwestbrrook)
+
+## ⚙️ 快速开始
 
 后端使用intellij IDEA Java进行编程，采用Maven架构。
+
+### Requirements
+
+- `JDK >= 21`
+- `MySQL >= 8.4.2`
+
+编写代码时各控件版本如下：
+
+	IntelliJ IDEA 2024.2.0.2
+ 
+	MySQL 8.4.2
+ 
+	jdk 21
+
+### 启动方法
 
 后端（服务器端）理论部署步骤：
 
@@ -13,13 +36,7 @@ Summer School Professional Skills Practical Training Major Assignment (Completed
 
 3、修改QAtxt文件中提示的需修改的数据库信息和路径信息后即可运行
 
-各控件版本如下：
-
-	IntelliJ IDEA 2024.2.0.2
- 
-	MySQL 8.4.2
- 
-	jdk 21
+## 📄 其他说明
 
 后端代码已整合完成，展示用功能已测试，展示时基本无bug出现，可能有部分小bug未发现
 
