@@ -1,0 +1,1 @@
+var packageSearchIndex = [{"l":"example","url":"example/package-summary.html"}, {"l":"[root]","url":"[root]/package-summary.html"}, {"l":"example.handlers","url":"example/handlers/package-summary.html"}, {"l":"All packages","url":"index.html"}]
