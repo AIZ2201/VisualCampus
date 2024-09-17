@@ -3,6 +3,10 @@ Summer School Professional Skills Practical Training Major Assignment (Completed
 
 本项目为东南大学 2022 级计算机科学与技术专业暑期学校专业技能实训项目VisualCampus（已完成，现已添加前端代码和前端exe）
 
+🔮 本项目参考了如下2021级的同课程项目，欢迎移步如下链接
+
+https://github.com/JinBridger/SEU-SummerSchool-VCampus
+
 本项目由以下 5 位本科生完成，欢迎访问他们的 GitHub 主页（还有一位暂未加入）
 
 [AIZ2207](https://github.com/AIZ2201),
