@@ -65,6 +65,10 @@ javadoc文件见doc文件夹
 
 代码中C++占比高是由于OpenCV库导致，实际主要代码为Java和kotlin
 
+javadoc中没有脚本相关代码的说明（因为能导出javadoc的电脑没有配置脚本相关依赖而配置了的电脑无法导出javadoc所以这里把脚本相关代码删除后进行的javadoc导出）
+
+IDEA自带的javadoc导出不能有中文路径，所以管理员为中文的电脑可能会出问题
+
 - `VisualCampusQA为编程中出现的部分问题和解决方法`
 - `vcampus.sql为数据库sql文件`
 - `另外两个txt为其文件名所示内容`
