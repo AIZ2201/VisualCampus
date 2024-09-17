@@ -7,12 +7,13 @@ Summer School Professional Skills Practical Training Major Assignment (Completed
 
 https://github.com/JinBridger/SEU-SummerSchool-VCampus
 
-本项目由以下 5 位本科生完成，欢迎访问他们的 GitHub 主页（还有一位暂未加入）
+本项目由以下 5 位本科生完成，欢迎访问他们的 GitHub 主页
 
 [AIZ2207](https://github.com/AIZ2201),
 [moveon](https://github.com/hxk77882),
 [Yishu Wang](https://github.com/seuwestbrrook),
-[lee](https://github.com/leee040606)
+[lee](https://github.com/leee040606),
+[ke1even](https://github.com/ke1even)
 
 ## ⚙️ 快速开始
 
@@ -20,7 +21,7 @@ https://github.com/JinBridger/SEU-SummerSchool-VCampus
 
 后端使用intellij IDEA Java进行编程，采用Maven架构
 
-（代码中C++占比高是由于OpenCV库导致，实际主要代码为Java和kotlin）
+（代码中C++占比高是由于OpenCV库导致，并且在前端打包过程中可能还进行了多次复制，实际主要代码为Java和kotlin）
 
 ### 🔑 Requirements
 
@@ -63,7 +64,7 @@ javadoc文件见doc文件夹
 
 后端代码已整合完成，展示用功能已测试，展示时基本无bug出现，可能有部分小bug未发现
 
-代码中C++占比高是由于OpenCV库导致，实际主要代码为Java和kotlin
+代码中C++占比高是由于OpenCV库导致，并且在前端打包过程中可能还进行了多次复制，实际主要代码为Java和kotlin
 
 javadoc中没有脚本相关代码的说明（因为能导出javadoc的电脑没有配置脚本相关依赖而配置了的电脑无法导出javadoc所以这里把脚本相关代码删除后进行的javadoc导出）
 
