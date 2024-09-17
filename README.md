@@ -20,6 +20,8 @@ https://github.com/JinBridger/SEU-SummerSchool-VCampus
 
 后端使用intellij IDEA Java进行编程，采用Maven架构
 
+（代码中C++占比高是由于OpenCV库导致，实际主要代码为Java和kotlin）
+
 ### 🔑 Requirements
 
 - `JDK >= 21`
@@ -60,6 +62,8 @@ javadoc文件见doc文件夹
 前端说明还不算完全完整，待补充
 
 后端代码已整合完成，展示用功能已测试，展示时基本无bug出现，可能有部分小bug未发现
+
+代码中C++占比高是由于OpenCV库导致，实际主要代码为Java和kotlin
 
 - `VisualCampusQA为编程中出现的部分问题和解决方法`
 - `vcampus.sql为数据库sql文件`
