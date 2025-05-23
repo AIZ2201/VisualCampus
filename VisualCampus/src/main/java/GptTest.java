@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GptTest {
 
-    private static final String API_KEY = "sk-1M6xwOv2F7ZWN97TmjN8XjB44eFMDQE6HaaxwSNPJZNkMFIk";
+    private static final String API_KEY = System.getenv("OPENAI_API_KEY"); // 从环境变量读取API Key
     private static final String BASE_URL = "https://api.chatanywhere.tech/v1/chat/completions";
     private static final OkHttpClient client = new OkHttpClient();
     private static final ObjectMapper objectMapper = new ObjectMapper();
