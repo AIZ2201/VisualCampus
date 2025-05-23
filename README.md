@@ -78,6 +78,8 @@ IDEA自带的javadoc导出不能有中文路径，所以管理员为中文的电
 
 脚本中的userId和password需在项目文件夹（VisualCampus）外建立credentials.txt文件并将一卡通号和密码按如下格式输入即可（默认相对路径为项目文件夹外的credentials.txt，源代码中路径为"../credentials.txt"）
 
+出于安全考虑，GptTest.java文件中调用LLM的API_KEY需要在环境变量中添加或自行替换
+
 credentials.txt文件中格式：
 
 	userId=yourUserId
